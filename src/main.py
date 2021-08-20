@@ -21,7 +21,7 @@ def main():
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED)
     SDL_RenderSetScale(renderer, SCALE, SCALE)
     
-    surface = IMG_Load(str.encode("assets/tiles.png"))
+    surface = IMG_Load(str.encode("../assets/tiles.png"))
     texture = SDL_CreateTextureFromSurface(renderer, surface)
     SDL_FreeSurface(surface)
     
