@@ -74,6 +74,13 @@ class SpriteBatch:
         )
         dest_rect = SDL_Rect(x, y, src_rect.w, src_rect.h)
         SDL_RenderCopy(self.renderer, self.texture, src_rect, dest_rect)
+    
+    def draw_stretched(self, x, y, src_rect, width, height):
+        src_rect = SDL_Rect(
+            src_rect.x, src_rect.y, src_rect.width, src_rect.height
+        )
+        dest_rect = SDL_Rect(x, y, width, height)
+        SDL_RenderCopy(self.renderer, self.texture, src_rect, dest_rect)
 
 
 if __name__ == "__main__":

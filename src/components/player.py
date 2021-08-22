@@ -3,6 +3,7 @@ from src.maths.utils import approach
 
 from .collider import Collider, Mask
 from .mover import Mover
+from .sprite import Sprite
 
 
 class Player(Component):
@@ -12,8 +13,20 @@ class Player(Component):
     GRAV = 3000
     MAX_GRAV = 900
     JUMP_FORCE = 800
+    SCALE_SPEED = 3
+    
+    def __init__(self):
+        self.was_on_ground = False
     
     def update(self, delta_time):
+        collider = self.entity.get(Collider)
+        mover = self.entity.get(Mover)
+        sprite = self.entity.get(Sprite)
+
+        # Bounce scale back to 1.
+        sprite.scale_x = approach(sprite.scale_x, 1, self.SCALE_SPEED * delta_time)
+        sprite.scale_y = approach(sprite.scale_y, 1, self.SCALE_SPEED * delta_time)
+        
         hor = 0
         jump = False
         
@@ -26,8 +39,6 @@ class Player(Component):
         if keyboard.just_pressed(keyboard.UP):
             jump = True
         
-        mover = self.entity.get(Mover)
-        
         # Gravity.
         mover.speed_y = approach(mover.speed_y, self.MAX_GRAV, self.GRAV * delta_time)
         
@@ -38,8 +49,16 @@ class Player(Component):
         if hor != 0:
             mover.speed_x = approach(mover.speed_x, hor * self.MAX_SPEED, self.ACCEL * delta_time)
         
-        # Jumping.
-        collider = self.entity.get(Collider)
         on_ground = collider.overlaps_mask(Mask.SOLID, 0, 1)
+        
+        # Squash if landing.
+        if on_ground and not self.was_on_ground:
+            sprite.scale_x = 1.5
+            sprite.scale_y = 0.5
+        self.was_on_ground = on_ground
+
+        # Jumping.
         if on_ground and jump:
             mover.speed_y = -self.JUMP_FORCE
+            sprite.scale_x = 0.5
+            sprite.scale_y = 1.8
