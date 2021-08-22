@@ -19,6 +19,7 @@ class Factory:
         sprite = e.add(Sprite(Rect(64, 0, 32, 32)))
         sprite.offset_x = -16
         sprite.offset_y = -32
+        sprite.draw_order = 10
 
         e.add(Collider(-16, -32, 32, 32))
         

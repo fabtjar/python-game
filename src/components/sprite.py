@@ -1,8 +1,10 @@
 from src.component import Component
+from src.drawable import Drawable
 
 
-class Sprite(Component):
+class Sprite(Component, Drawable):
     def __init__(self, src_rect):
+        super().__init__()
         self.src_rect = src_rect
         self.offset_x = 0
         self.offset_y = 0
