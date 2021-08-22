@@ -15,10 +15,9 @@ class Game:
         self.entities = []
         self.drawables = []
         self.update_drawables = False
-
-        self.bg_src_rect = Rect(0, 0, 64, 64)
     
     def start(self):
+        self.entities.append(self.factory.create_background())
         self.entities.append(self.factory.create_player(self.WIDTH / 2, self.HEIGHT / 2))
         self.entities.append(self.factory.create_wall(32 * 2, 32 * 2))
         self.entities.append(self.factory.create_wall(32 * 3, 32 * 5))
@@ -33,11 +32,6 @@ class Game:
         if self.update_drawables:
             self.drawables.sort(key=lambda d: d.draw_order)
             self.update_drawables = False
-        
-        # Draw background.
-        for x in range(0, self.WIDTH, 64):
-            for y in range(0, self.HEIGHT, 64):
-                sprite_batch.draw(x, y, self.bg_src_rect)
         
         for d in self.drawables:
             d.draw(sprite_batch)

@@ -2,6 +2,7 @@ from components.collider import Collider, Mask
 from components.mover import Mover
 from components.player import Player
 from components.sprite import Sprite
+from components.tiled_sprite import TiledSprite
 from entity import Entity
 from maths.rect import Rect
 
@@ -33,4 +34,12 @@ class Factory:
         collider = e.add(Collider(0, 0, 32, 32))
         collider.masks = (Mask.SOLID,)
     
+        return e
+    
+    def create_background(self):
+        e = Entity(self.game, 0, 0)
+        
+        sprite = e.add(TiledSprite(Rect(0, 0, 64, 64), self.game.WIDTH, self.game.HEIGHT))
+        sprite.draw_order = -100
+        
         return e
