@@ -1,5 +1,6 @@
 class Entity:
-    def __init__(self, x, y):
+    def __init__(self, game, x, y):
+        self.game = game
         self.x = x
         self.y = y
         self.components = []

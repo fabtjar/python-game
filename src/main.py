@@ -1,78 +1,64 @@
 from sdl2 import *
 from sdl2.sdlimage import *
 
-import factory
-
-WIDTH = 320
-HEIGHT = 240
-SCALE = 2
-FPS = 60
+from game import Game
 
 
-def main():
-    SDL_Init(SDL_INIT_VIDEO)
-    
-    window = SDL_CreateWindow(
-        str.encode("Python Game"),
-        SDL_WINDOWPOS_UNDEFINED,
-        SDL_WINDOWPOS_UNDEFINED,
-        WIDTH * SCALE,
-        HEIGHT * SCALE,
-        0
-    )
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC)
-    SDL_RenderSetScale(renderer, SCALE, SCALE)
-    
-    surface = IMG_Load(str.encode("../assets/tiles.png"))
-    texture = SDL_CreateTextureFromSurface(renderer, surface)
-    SDL_FreeSurface(surface)
-    
-    sprite_batch = SpriteBatch(renderer, texture)
-    
-    entities = []
-    
-    entities.append(factory.create_player())
-    entities.append(factory.create_player())
-    entities.append(factory.create_player())
-    entities.append(factory.create_player())
-    entities.append(factory.create_player())
-    entities.append(factory.create_player())
-    entities.append(factory.create_player())
-    entities.append(factory.create_player())
-    entities.append(factory.create_player())
-    
-    event = SDL_Event()
-    
-    running = True
-    
-    while running:
-        old_ticks = SDL_GetTicks()
+class App:
+    def __init__(self):
+        SDL_Init(SDL_INIT_VIDEO)
         
-        SDL_PollEvent(event)
-        if event.type == SDL_QUIT:
-            running = False
+        self.game = Game()
         
-        # Draw background.
-        for x in range(0, WIDTH, 64):
-            for y in range(0, HEIGHT, 64):
-                SDL_RenderCopy(renderer, texture, SDL_Rect(0, 0, 64, 64), SDL_Rect(x, y, 64, 64))
+        self.window = SDL_CreateWindow(
+            str.encode("Python Game"),
+            SDL_WINDOWPOS_UNDEFINED,
+            SDL_WINDOWPOS_UNDEFINED,
+            Game.WIDTH * Game.SCALE,
+            Game.HEIGHT * Game.SCALE,
+            0
+        )
+        self.renderer = SDL_CreateRenderer(
+            self.window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+        )
+        SDL_RenderSetScale(self.renderer, Game.SCALE, Game.SCALE)
         
-        for e in entities:
-            e.update(1 / FPS)
+        self.surface = IMG_Load(str.encode("../assets/tiles.png"))
+        self.texture = SDL_CreateTextureFromSurface(self.renderer, self.surface)
+        SDL_FreeSurface(self.surface)
         
-        for e in entities:
-            e.draw(sprite_batch)
-        
-        SDL_RenderPresent(renderer)
+        self.sprite_batch = SpriteBatch(self.renderer, self.texture)
+        self.event = SDL_Event()
+    
+    def start(self):
+        self.game.start()
 
-        new_ticks = SDL_GetTicks()
-        if new_ticks - old_ticks < 1000 / FPS:
-            SDL_Delay(new_ticks - old_ticks)
-
-    SDL_DestroyRenderer(renderer)
-    SDL_DestroyTexture(texture)
-    SDL_DestroyWindow(window)
-    SDL_Quit()
+        running = True
+        while running:
+            old_ticks = SDL_GetTicks()
+            
+            SDL_PollEvent(self.event)
+            if self.event.type == SDL_QUIT:
+                running = False
+            elif self.event.type == SDL_KEYDOWN and self.event.key.repeat == 0:
+                self.game.keyboard.set_down(self.event.key.keysym.scancode, True)
+            elif self.event.type == SDL_KEYUP:
+                self.game.keyboard.set_down(self.event.key.keysym.scancode, False)
+            
+            self.game.update(1 / Game.FPS)
+            self.game.draw(self.sprite_batch)
+            
+            SDL_RenderPresent(self.renderer)
+    
+            new_ticks = SDL_GetTicks()
+            if new_ticks - old_ticks < 1000 / Game.FPS:
+                SDL_Delay(new_ticks - old_ticks)
+    
+    def destroy(self):
+        SDL_DestroyRenderer(self.renderer)
+        SDL_DestroyTexture(self.texture)
+        SDL_DestroyWindow(self.window)
+        SDL_Quit()
 
 
 class SpriteBatch:
@@ -89,4 +75,6 @@ class SpriteBatch:
 
 
 if __name__ == "__main__":
-    main()
+    app = App()
+    app.start()
+    app.destroy()

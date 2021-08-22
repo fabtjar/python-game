@@ -1,5 +1,4 @@
 from src.component import Component
-from src.main import HEIGHT, WIDTH
 
 
 class Mover(Component):
@@ -22,14 +21,16 @@ class Mover(Component):
         y = self.entity.y + move_y
 
         # Wrap around screen.
-        if x + 32 < 0:
-            x += WIDTH + 32
-        elif x > WIDTH:
-            x -= WIDTH + 32
-        if y + 32 < 0:
-            y += HEIGHT + 32
-        elif y > HEIGHT:
-            y -= HEIGHT + 32
+        width = self.entity.game.WIDTH
+        height = self.entity.game.HEIGHT
+        if x + 16 < 0:
+            x += width + 32
+        elif x - 16 > width:
+            x -= width + 32
+        if y < 0:
+            y += height + 32
+        elif y - 32 > height:
+            y -= height + 32
         
         self.entity.x = int(x)
         self.entity.y = int(y)
