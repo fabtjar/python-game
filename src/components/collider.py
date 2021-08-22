@@ -23,6 +23,13 @@ class Collider(Component):
             self.bottom + offset_y > other.top
         )
     
+    def overlaps_mask(self, mask, offset_x=0, offset_y=0):
+        colliders = [c for c in self.entity.game.get_all(Collider) if mask in c.masks]
+        for c in colliders:
+            if self.overlaps(c, offset_x, offset_y):
+                return True
+        return False
+    
     @property
     def left(self):
         return self.x + self.entity.x

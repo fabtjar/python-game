@@ -46,16 +46,12 @@ class Mover(Component):
             return
         
         collider = self.entity.get(Collider)
-        colliders = [c for c in self.entity.game.get_all(Collider) if Mask.SOLID in c.masks]
-        
         sign_x = sign(move_x)
         
         while move_x != 0:
-            for c in colliders:
-                if collider.overlaps(c, sign_x, 0):
-                    move_x = sign_x = 0
-                    self.stop_x()
-                    break
+            if collider.overlaps_mask(Mask.SOLID, sign_x, 0):
+                self.stop_x()
+                break
             self.entity.x += sign_x
             move_x -= sign_x
 
@@ -64,16 +60,12 @@ class Mover(Component):
             return
     
         collider = self.entity.get(Collider)
-        colliders = [c for c in self.entity.game.get_all(Collider) if Mask.SOLID in c.masks]
-    
         sign_y = sign(move_y)
     
         while move_y != 0:
-            for c in colliders:
-                if collider.overlaps(c, 0, sign_y):
-                    move_y = sign_y = 0
-                    self.stop_y()
-                    break
+            if collider.overlaps_mask(Mask.SOLID, 0, sign_y):
+                self.stop_y()
+                break
             self.entity.y += sign_y
             move_y -= sign_y
     
