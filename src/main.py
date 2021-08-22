@@ -37,6 +37,8 @@ class App:
         while running:
             old_ticks = SDL_GetTicks()
             
+            self.game.keyboard.update()
+            
             SDL_PollEvent(self.event)
             if self.event.type == SDL_QUIT:
                 running = False

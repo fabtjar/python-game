@@ -8,7 +8,6 @@ class Keyboard:
     def __init__(self):
         self._keys_down = {}
         self._old_keys_down = {}
-        self.name = "init"
     
     def is_down(self, key_code):
         try:
@@ -32,4 +31,4 @@ class Keyboard:
             return False
     
     def update(self):
-        _old_keys_down = self._keys_down
+        self._old_keys_down = self._keys_down.copy()
