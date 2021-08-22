@@ -2,6 +2,7 @@ from sdl2 import *
 from sdl2.sdlimage import *
 
 import factory
+import keyboard
 
 WIDTH = 320
 HEIGHT = 240
@@ -29,17 +30,9 @@ def main():
     
     sprite_batch = SpriteBatch(renderer, texture)
     
-    entities = []
-    
-    entities.append(factory.create_player())
-    entities.append(factory.create_player())
-    entities.append(factory.create_player())
-    entities.append(factory.create_player())
-    entities.append(factory.create_player())
-    entities.append(factory.create_player())
-    entities.append(factory.create_player())
-    entities.append(factory.create_player())
-    entities.append(factory.create_player())
+    entities = [
+        factory.create_player(WIDTH / 2, HEIGHT / 2),
+    ]
     
     event = SDL_Event()
     
@@ -51,6 +44,12 @@ def main():
         SDL_PollEvent(event)
         if event.type == SDL_QUIT:
             running = False
+        elif event.type == SDL_KEYDOWN and event.key.repeat == 0:
+            keyboard.set_down(event.key.keysym.scancode, True)
+        elif event.type == SDL_KEYUP:
+            keyboard.set_down(event.key.keysym.scancode, False)
+        
+        print('main.py', keyboard._keys_down)
         
         # Draw background.
         for x in range(0, WIDTH, 64):
