@@ -1,4 +1,7 @@
 from src.component import Component
+from src.maths.utils import sign
+
+from .collider import Collider, Mask
 
 
 class Mover(Component):
@@ -17,8 +20,11 @@ class Mover(Component):
         self.remainder_x -= move_x
         self.remainder_y -= move_y
         
-        x = self.entity.x + move_x
-        y = self.entity.y + move_y
+        self.move_x(move_x)
+        self.move_y(move_y)
+        
+        x = self.entity.x
+        y = self.entity.y
 
         # Wrap around screen.
         width = self.entity.game.WIDTH
@@ -34,3 +40,45 @@ class Mover(Component):
         
         self.entity.x = int(x)
         self.entity.y = int(y)
+    
+    def move_x(self, move_x):
+        if move_x == 0:
+            return
+        
+        collider = self.entity.get(Collider)
+        colliders = [c for c in self.entity.game.get_all(Collider) if Mask.SOLID in c.masks]
+        
+        sign_x = sign(move_x)
+        
+        while move_x != 0:
+            for c in colliders:
+                if collider.overlaps(c, sign_x, 0):
+                    move_x = sign_x = 0
+                    self.stop_x()
+                    break
+            self.entity.x += sign_x
+            move_x -= sign_x
+
+    def move_y(self, move_y):
+        if move_y == 0:
+            return
+    
+        collider = self.entity.get(Collider)
+        colliders = [c for c in self.entity.game.get_all(Collider) if Mask.SOLID in c.masks]
+    
+        sign_y = sign(move_y)
+    
+        while move_y != 0:
+            for c in colliders:
+                if collider.overlaps(c, 0, sign_y):
+                    move_y = sign_y = 0
+                    self.stop_y()
+                    break
+            self.entity.y += sign_y
+            move_y -= sign_y
+    
+    def stop_x(self):
+        self.speed_x = self.remainder_x = 0
+    
+    def stop_y(self):
+        self.speed_y = self.remainder_y = 0
